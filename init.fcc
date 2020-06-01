@@ -1,0 +1,22 @@
+variant: fcos
+version: 1.0.0
+systemd:
+  units:
+    - name: graphite.service
+      enabled: true
+      contents: |
+        [Unit]
+        Description=Graphite
+        After=network-online.target
+        Wants=network-online.target
+
+        [Service]
+        TimeoutStartSec=0
+        ExecStartPre=-/bin/podman kill graphite
+        ExecStartPre=-/bin/podman rm graphite
+        ExecStartPre=/bin/podman pull graphiteapp/graphite-statsd
+        ExecStart=/bin/podman run --name graphite -p 80:80 -p 2003-2004:2003-2004 -p 2023-2024:2023-2024 -p 8125:8125/udp -p 8126:8126 graphiteapp/graphite-statsd
+
+        [Install]
+        WantedBy=multi-user.target
+

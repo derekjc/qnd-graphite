@@ -1,0 +1,14 @@
+{
+  "ignition": {
+    "version": "3.0.0"
+  },
+  "systemd": {
+    "units": [
+      {
+        "contents": "[Unit]\nDescription=Graphite\nAfter=network-online.target\nWants=network-online.target\n\n[Service]\nTimeoutStartSec=0\nExecStartPre=-/bin/podman kill graphite\nExecStartPre=-/bin/podman rm graphite\nExecStartPre=/bin/podman pull graphiteapp/graphite-statsd\nExecStart=/bin/podman run --name graphite -p 80:80 -p 2003-2004:2003-2004 -p 2023-2024:2023-2024 -p 8125:8125/udp -p 8126:8126 graphiteapp/graphite-statsd\n\n[Install]\nWantedBy=multi-user.target\n",
+        "enabled": true,
+        "name": "graphite.service"
+      }
+    ]
+  }
+}
